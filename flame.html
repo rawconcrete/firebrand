@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>javascript flame</title>
+    <title>🔥</title>
     <style>
         body {
             margin: 0;
@@ -24,9 +24,9 @@
         canvas.height = window.innerHeight;
 
         const particles = [];
-        const maxParticles = 300;
+        const maxParticles = 100; // fewer particles for a calm effect
 
-        // particle class for individual flame particles
+        // particle class for individual embers
         class Particle {
             constructor(x, y, color, size, speedY, speedX, fadeRate) {
                 this.x = x;
@@ -34,14 +34,14 @@
                 this.color = color;
                 this.size = size;
                 this.speedY = speedY; // upward speed
-                this.speedX = speedX; // horizontal movement for crackle effect
-                this.fadeRate = fadeRate; // rate at which the particle fades
+                this.speedX = speedX; // gentle horizontal drift
+                this.fadeRate = fadeRate; // slow fade for ember effect
             }
 
             update() {
-                this.y -= this.speedY; // move upward
-                this.x += this.speedX; // add gentle horizontal motion
-                this.size -= this.fadeRate; // gracefully reduce size
+                this.y -= this.speedY; // move upward gradually
+                this.x += this.speedX; // slight horizontal motion
+                this.size -= this.fadeRate; // slow fading over time
             }
 
             draw() {
@@ -52,15 +52,15 @@
             }
         }
 
-        // creates a single particle with random properties
+        // creates a single particle with calm, ember-like properties
         function createParticle() {
-            const x = canvas.width / 2 + (Math.random() * 40 - 20); // random horizontal origin
-            const y = canvas.height / 2 + (Math.random() * 20 - 10);
-            const size = Math.random() * 8 + 2; // varied particle size
-            const speedY = Math.random() * 1.5 + 0.5; // slower upward motion
-            const speedX = (Math.random() - 0.5) * 2; // horizontal randomness
-            const fadeRate = Math.random() * 0.05 + 0.02; // smooth fading
-            const colors = ['#ff4500', '#ff6347', '#ffd700', '#ffa500', '#ffae42'];
+            const x = canvas.width / 2 + (Math.random() * 20 - 10); // small spread for origin
+            const y = canvas.height / 2 + (Math.random() * 10 - 5);
+            const size = Math.random() * 4 + 2; // smaller particles
+            const speedY = Math.random() * 0.5 + 0.2; // slow upward drift
+            const speedX = (Math.random() - 0.5) * 0.5; // gentle horizontal drift
+            const fadeRate = Math.random() * 0.01 + 0.005; // gradual fading
+            const colors = ['#ff6347', '#ff4500', '#b22222', '#8b0000']; // ember-like colours
             const color = colors[Math.floor(Math.random() * colors.length)];
             particles.push(new Particle(x, y, color, size, speedY, speedX, fadeRate));
         }
@@ -73,21 +73,21 @@
                 particle.draw();
 
                 if (particle.size <= 0) {
-                    particles.splice(i, 1); // remove particles that fade completely
+                    particles.splice(i, 1); // remove faded particles
                 }
             }
 
             if (particles.length > maxParticles) {
-                particles.splice(0, particles.length - maxParticles); // ensure particle limit
+                particles.splice(0, particles.length - maxParticles); // limit total particles
             }
         }
 
         // main animation loop
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height); // clear canvas for each frame
-            if (Math.random() > 0.8) createParticle(); // randomly create particles for dynamic effect
+            if (Math.random() > 0.95) createParticle(); // less frequent particle creation
             handleParticles();
-            requestAnimationFrame(animate); // maintain smooth animation
+            requestAnimationFrame(animate); // smooth animation loop
         }
 
         // adjust canvas size on window resize
