@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="flameCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('flameCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        const maxParticles = 100; // fewer particles for a calm effect
+
+        // particle class for individual embers
+        class Particle {
+            constructor(x, y, color, size, speedY, speedX, fadeRate) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.size = size;
+                this.speedY = speedY; // upward speed
+                this.speedX = speedX; // gentle horizontal drift
+                this.fadeRate = fadeRate; // slow fade for ember effect
+            }
+
+            update() {
+                this.y -= this.speedY; // move upward gradually
+                this.x += this.speedX; // slight horizontal motion
+                this.size -= this.fadeRate; // slow fading over time
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, Math.max(0, this.size), 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+        }
+
+        // creates a single particle with calm, ember-like properties
+        function createParticle() {
+            const x = canvas.width / 2 + (Math.random() * 20 - 10); // small spread for origin
+            const y = canvas.height / 2 + (Math.random() * 10 - 5);
+            const size = Math.random() * 4 + 2; // smaller particles
+            const speedY = Math.random() * 0.5 + 0.2; // slow upward drift
+            const speedX = (Math.random() - 0.5) * 0.5; // gentle horizontal drift
+            const fadeRate = Math.random() * 0.01 + 0.005; // gradual fading
+            const colors = ['#ff6347', '#ff4500', '#b22222', '#8b0000']; // ember-like colours
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            particles.push(new Particle(x, y, color, size, speedY, speedX, fadeRate));
+        }
+
+        // handles all particles, updating and removing as needed
+        function handleParticles() {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const particle = particles[i];
+                particle.update();
+                particle.draw();
+
+                if (particle.size <= 0) {
+                    particles.splice(i, 1); // remove faded particles
+                }
+            }
+
+            if (particles.length > maxParticles) {
+                particles.splice(0, particles.length - maxParticles); // limit total particles
+            }
+        }
+
+        // main animation loop
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // clear canvas for each frame
+            if (Math.random() > 0.95) createParticle(); // less frequent particle creation
+            handleParticles();
+            requestAnimationFrame(animate); // smooth animation loop
+        }
+
+        // adjust canvas size on window resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // start the animation
+        animate();
+    </script>
+</body>
+</html>
