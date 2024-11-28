@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JavaScript Flame</title>
+    <title>javascript flame</title>
     <style>
         body {
             margin: 0;
@@ -26,66 +26,77 @@
         const particles = [];
         const maxParticles = 300;
 
+        // particle class for individual flame particles
         class Particle {
-            constructor(x, y, color, size, speedY) {
+            constructor(x, y, color, size, speedY, speedX, fadeRate) {
                 this.x = x;
                 this.y = y;
                 this.color = color;
                 this.size = size;
-                this.speedY = speedY;
+                this.speedY = speedY; // upward speed
+                this.speedX = speedX; // horizontal movement for crackle effect
+                this.fadeRate = fadeRate; // rate at which the particle fades
             }
 
             update() {
-                this.y -= this.speedY;
-                this.size *= 0.96; // Shrink over time
+                this.y -= this.speedY; // move upward
+                this.x += this.speedX; // add gentle horizontal motion
+                this.size -= this.fadeRate; // gracefully reduce size
             }
 
             draw() {
                 ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.arc(this.x, this.y, Math.max(0, this.size), 0, Math.PI * 2);
                 ctx.fillStyle = this.color;
                 ctx.fill();
             }
         }
 
+        // creates a single particle with random properties
         function createParticle() {
-            const x = canvas.width / 2 + (Math.random() * 20 - 10);
+            const x = canvas.width / 2 + (Math.random() * 40 - 20); // random horizontal origin
             const y = canvas.height / 2 + (Math.random() * 20 - 10);
-            const size = Math.random() * 6 + 4;
-            const speedY = Math.random() * 2 + 1;
-            const colors = ['#ff4500', '#ff6347', '#ffd700', '#ffa500'];
+            const size = Math.random() * 8 + 2; // varied particle size
+            const speedY = Math.random() * 1.5 + 0.5; // slower upward motion
+            const speedX = (Math.random() - 0.5) * 2; // horizontal randomness
+            const fadeRate = Math.random() * 0.05 + 0.02; // smooth fading
+            const colors = ['#ff4500', '#ff6347', '#ffd700', '#ffa500', '#ffae42'];
             const color = colors[Math.floor(Math.random() * colors.length)];
-            particles.push(new Particle(x, y, color, size, speedY));
+            particles.push(new Particle(x, y, color, size, speedY, speedX, fadeRate));
         }
 
+        // handles all particles, updating and removing as needed
         function handleParticles() {
             for (let i = particles.length - 1; i >= 0; i--) {
                 const particle = particles[i];
                 particle.update();
                 particle.draw();
 
-                if (particle.size < 0.5) {
-                    particles.splice(i, 1); // Remove small particles
+                if (particle.size <= 0) {
+                    particles.splice(i, 1); // remove particles that fade completely
                 }
             }
 
             if (particles.length > maxParticles) {
-                particles.splice(0, particles.length - maxParticles);
+                particles.splice(0, particles.length - maxParticles); // ensure particle limit
             }
         }
 
+        // main animation loop
         function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            createParticle();
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // clear canvas for each frame
+            if (Math.random() > 0.8) createParticle(); // randomly create particles for dynamic effect
             handleParticles();
-            requestAnimationFrame(animate);
+            requestAnimationFrame(animate); // maintain smooth animation
         }
 
+        // adjust canvas size on window resize
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
         });
 
+        // start the animation
         animate();
     </script>
 </body>
